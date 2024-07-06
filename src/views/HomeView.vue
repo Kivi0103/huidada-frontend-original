@@ -1,9 +1,14 @@
+<template>
+  <router-view />
+</template>
+
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import GlobalHeader from "@/components/GlobalHeader.vue";
+import {ref} from "vue";
+const currentView = ref("index");
+
 </script>
 
-<template>
-  <main>
-    <TheWelcome />
-  </main>
-</template>
+<style scoped>
+
+</style>
