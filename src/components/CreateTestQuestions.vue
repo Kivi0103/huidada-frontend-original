@@ -1,5 +1,5 @@
 <template>
-  <h2> 请填写该测试的所有题目 </h2>
+  <h2 style="margin-top: 0"> 请填写该测试的所有题目 </h2>
   <el-form :model="form" label-width="100px">
     <div v-for="(question, qIndex) in form.questions" :key="qIndex" class="question-section">
       <el-form-item :label="'题目 ' + (qIndex + 1)" :error="questionErrors[qIndex]?.description">

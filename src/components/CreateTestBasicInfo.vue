@@ -1,5 +1,5 @@
 <template>
-  <h1> 请填写测试的基本信息 </h1>
+  <h2 style="margin-top: 0"> 请填写测试的基本信息 </h2>
   <el-form
       ref="ruleFormRef"
       style="max-width: 600px"

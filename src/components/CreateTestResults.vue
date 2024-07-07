@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2> 请填写该测试的所有结果 </h2>
+    <h2 style="margin-top: 0"> 请填写该测试的所有结果 </h2>
     <div v-for="(form, index) in forms" :key="index" class="form-container">
       <el-form :model="form" :rules="rules">
         <el-form-item :label="'结果'+ (index + 1) +'名称'" prop="resultName">
