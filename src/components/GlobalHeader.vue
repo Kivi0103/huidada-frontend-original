@@ -12,8 +12,27 @@
         <el-menu-item v-for="item in visibleRoutes" :index="item.path">{{ item.name }}</el-menu-item>
         <div class="flex-grow"/>
         <div class="user-functions">
-          <el-button type="primary" plain @click="$router.push('/userLogin')">登录</el-button>
-          <el-button type="primary" @click="$router.push('/userRegister')">注册</el-button>
+          <div v-if="!userStore.isLogin">
+            <el-button type="primary" plain @click="$router.push('/userLogin')">登录</el-button>
+            <el-button type="primary" @click="$router.push('/userRegister')">注册</el-button>
+          </div>
+          <div v-else>
+            <el-dropdown>
+              <el-link class="user-name" :underline="false">
+                <el-avatar
+                    src="{{loginUser.headPicture}}"
+                />
+                <div style="margin-left: 10px">{{ userStore.loginUser.userName }}</div>
+              </el-link>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="$router.push('/userCenter')" divided>用户中心</el-dropdown-item>
+                  <el-dropdown-item @click="doLogout" divided>退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+
+          </div>
         </div>
       </el-menu>
     </el-header>
@@ -23,6 +42,11 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import router from "@/router";
+import {useUserStore} from "@/stores/userStore";
+import {userLogoutUsingPost} from "@/api/userController";
+import {ElMessage} from "element-plus";
+
+const userStore = useUserStore();
 
 const nowActive = ref('/');
 // 获取路由中的所有路由项
@@ -39,10 +63,30 @@ router.afterEach(() => {
 })
 
 const handleSelect = (key: string) => {
-  router.push({
-    path: key
-  })
+  // 点击菜单项，跳转到对应的路由
+  if( key !== '/' && !userStore.isLogin){
+    ElMessage.error('请先登录');
+  }else{
+    router.push(key);
+  }
 }
+
+const doLogout = async () => {
+  // 向后端发送退出登录请求
+  const response = await userLogoutUsingPost();
+  if(response.data.code === 0){
+    // 退出登录成功，清空用户信息
+    userStore.setLoginUser({});
+    userStore.setLoginStatus(false);
+    // console.log("退出登录后，store中的信息：", userStore.loginUser, userStore.isLogin)
+    // 跳转到首页
+    await router.push('/');
+    ElMessage.success('退出登录成功');
+  }else{
+    ElMessage.error('退出登录失败'+response.data.message);
+  }
+}
+
 
 </script>
 

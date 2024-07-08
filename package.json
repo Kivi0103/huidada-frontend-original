@@ -8,7 +8,8 @@
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build --force"
+    "type-check": "vue-tsc --build --force",
+    "openapi": "node openapi.config.ts"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^20.14.5",
+    "@umijs/openapi": "^1.12.1",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/tsconfig": "^0.5.1",
     "npm-run-all2": "^6.2.0",

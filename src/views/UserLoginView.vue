@@ -21,11 +21,12 @@
           <el-form-item label="账号" prop="pass">
             <el-input v-model="userName" type="text" autocomplete="off"/>
           </el-form-item>
-          <el-form-item label="密码" prop="checkPass">
+          <el-form-item label="密码" prop="checkPass" >
             <el-input
                 v-model="password"
                 type="password"
                 autocomplete="off"
+                show-password
             />
           </el-form-item>
           <el-form-item>
@@ -46,14 +47,37 @@
   </el-container>
 </template>
 <script setup lang="ts">
-import {ref} from 'vue'
+import {reactive, ref} from 'vue'
+import {userLoginUsingPost} from "@/api/userController";
+import router from "@/router";
+import {useUserStore} from "@/stores/userStore";
+import {ElMessage} from "element-plus";
 
 const userName = ref('');
 const password = ref('');
 
-const handleLogin = () => {
-  // todo 向后端发送登录请求
-  console.log(userName.value, password.value);
+const handleLogin = async () => {
+  // 转成后端需要的格式
+  const user = reactive({
+    password: password.value,
+    userName: userName.value
+  } as API.UserLoginRequestDTO);
+  // 发送请求
+  const response = await userLoginUsingPost(user);
+  if(response.data.code === 0) {
+    // 登录成功, 将数据存入userStore中
+    const userStore = useUserStore();
+    userStore.setLoginUser(<API.UserVO>response.data.data);
+    userStore.setLoginStatus(true);
+    console.log('登录成功, 用户信息为：', userStore.loginUser);
+    ElMessage.success('登录成功');
+    // 跳转到首页
+    await router.push('/');
+  } else {
+    // 登录失败，提示错误信息
+    console.log('登录失败,', response.data.message);
+    ElMessage.error('登录失败:' + response.data.message);
+  }
 }
 
 

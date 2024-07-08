@@ -47,8 +47,12 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import {reactive, ref} from 'vue';
 import {House} from "@element-plus/icons-vue";
+import {userRegisterUsingPost} from "@/api/userController";
+import { ElMessage } from "element-plus";
+import router from "@/router";
+import {useUserStore} from "@/stores/userStore";
 
 const userName = ref('');
 const password = ref('');
@@ -87,13 +91,31 @@ const validateCheckPassword = () => {
   }
 };
 
-const handleRegister = () => {
+const handleRegister = async () => {
   validateUserName();
   validatePassword();
   validateCheckPassword();
   if (!userNameError.value && !passwordError.value && !checkPasswordError.value) {
-    // todo 向后端发送注册请求
-    console.log(userName.value, password.value, checkPassword.value);
+    // 转成后端需要的格式
+    const userData = reactive({
+      headPicture: '',
+      password: password.value,
+      passwordConfirm: checkPassword.value,
+      userName: userName.value
+    } as API.UserAddRequestDTO);
+
+    // 发送请求
+    const res = await userRegisterUsingPost(userData);
+    if (res.data.code === 0) {
+      ElMessage.success("注册成功！请登录");
+      await router.push({
+        path: "/",
+        replace: true,
+      });
+    } else {
+      ElMessage.error("注册失败！" + res.data.message);
+    }
+
   }
 };
 </script>
