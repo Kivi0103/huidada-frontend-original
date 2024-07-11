@@ -3,7 +3,7 @@
   <el-form :model="form" label-width="100px">
     <div v-for="(question, qIndex) in form.questions" :key="qIndex" class="question-section">
       <el-form-item :label="'题目 ' + (qIndex + 1)" :error="questionErrors[qIndex]?.description">
-        <el-input v-model="question.description" placeholder="题目描述"></el-input>
+        <el-input v-model="question.questionDesc" placeholder="题目描述"></el-input>
       </el-form-item>
       <el-form-item label="选项">
         <div v-for="(option, oIndex) in question.options" :key="oIndex" class="option-row">
@@ -13,7 +13,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item :error="questionErrors[qIndex]?.options?.[oIndex]?.description">
-                <el-input v-model="option.description" placeholder="选项描述"></el-input>
+                <el-input v-model="option.optionDesc" placeholder="选项描述"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6" v-if="testType === 0" style="margin-bottom: 10px">
@@ -41,24 +41,15 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import {reactive, ref} from 'vue'
+import {ElMessage} from 'element-plus'
 import router from "@/router";
+import {useTestPaperStore} from "@/stores/testPaperStore";
+import {addTestPaperUsingPost} from "@/api/testPaperController";
 
-interface OptionItem {
-  key: string;
-  description: string;
-  score?: number | null;
-  result?: string | null;
-}
-
-interface QuestionItem {
-  description: string;
-  options: OptionItem[];
-}
 
 interface Form {
-  questions: QuestionItem[];
+  questions: API.QuestionItem[];
 }
 
 interface OptionErrors {
@@ -74,23 +65,24 @@ interface QuestionErrors {
 
 const form = reactive<Form>({
   questions: [{
-    description: '',
+    questionDesc: '',
     options: [{
       key: 'A',
-      description: '',
+      optionDesc: '',
       score: 0,
       result: ''
     }]
   }]
 });
 
-const testType = ref<number>(1);
+const testPaperStore = useTestPaperStore();
+const testType = ref(testPaperStore.currentCreatingTestPaper.type);
 
-const questionErrors = ref<QuestionErrors[]>([]);
+const questionErrors = ref<QuestionErrors[]>([{}]);
 
 const addQuestion = () => {
   form.questions.push({
-    description: '',
+    questionDesc: '',
     options: []
   });
   questionErrors.value.push({});
@@ -101,13 +93,14 @@ const removeQuestion = (qIndex: number) => {
   questionErrors.value.splice(qIndex, 1);
 };
 
-const addOption = (qIndex: number) => {
-  const optionKey = String.fromCharCode(65 + form.questions[qIndex].options.length);  // A, B, C, ...
-  form.questions[qIndex].options.push({
+const addOption = (qIndex: number) => {// A, B, C, ...
+  const optionKey = String.fromCharCode(65 + (form.questions[qIndex].options?.length || 0));
+
+  form.questions[qIndex].options?.push({
     key: optionKey,
-    description: '',
-    score: testType.value === 0 ? 0 : null,
-    result: testType.value === 1 ? '' : null
+    optionDesc: '',
+    score: testType.value === 0 ? 0 : undefined,
+    result: testType.value === 1 ? '' : undefined
   });
 
   if (!questionErrors.value[qIndex].options) {
@@ -117,42 +110,42 @@ const addOption = (qIndex: number) => {
 };
 
 const removeOption = (qIndex: number, oIndex: number) => {
-  form.questions[qIndex].options.splice(oIndex, 1);
+  form.questions[qIndex].options?.splice(oIndex, 1);
   questionErrors.value[qIndex].options!.splice(oIndex, 1);
   // 更新选项键
-  form.questions[qIndex].options.forEach((option, index) => {
+  form.questions[qIndex].options?.forEach((option, index) => {
     option.key = String.fromCharCode(65 + index);
   });
 };
 
-const submitForm = () => {
+const submitForm = async () => {
   let hasError = false;
   questionErrors.value = [];
   // 检查题目个数
   if (form.questions.length < 1) {
     ElMessage.error('至少需要一个题目');
     return;
-  }else{
+  } else {
     for (let qIndex = 0; qIndex < form.questions.length; qIndex++) {
       const question = form.questions[qIndex];
       const qError: QuestionErrors = {};
 
-      if (!question.description) {
+      if (!question.questionDesc) {
         qError.description = '题目描述不能为空';
         hasError = true;
       }
-      if (question.options.length === 0) {
+      if (question.options?.length === 0) {
         qError.description = '每个题目至少需要一个选项';
+
         hasError = true;
       }
 
       qError.options = [];
 
-      for (let oIndex = 0; oIndex < question.options.length; oIndex++) {
-        const option = question.options[oIndex];
+      for (let oIndex = 0; oIndex < (question.options?.length || 0); oIndex++) {
+        const option = question.options![oIndex];
         const oError: OptionErrors = {};
-
-        if (!option.description) {
+        if (!option.optionDesc) {
           oError.description = '选项描述不能为空';
           hasError = true;
         }
@@ -175,11 +168,31 @@ const submitForm = () => {
       return;
     }
 
-    // ElMessage.success('表单提交成功');
-    // console.log(form.questions);  // 打印表单数据
-    // 提交逻辑
-    // 跳转到下一步页面
-    router.push('/createTestResults')
+    // 将表单中的信息存入store中
+    testPaperStore.currentCreatingTestPaper.questionContent = form.questions;
+    const response = await addTestPaperUsingPost(testPaperStore.currentCreatingTestPaper);
+    if (response.data.code === 0) {
+      // 成功创建试卷
+      ElMessage.success('创建试卷成功');
+      // 清空表单
+      form.questions = [{
+        questionDesc: '',
+        options: [{
+          key: 'A',
+          optionDesc: '',
+          score: 0,
+          result: ''
+        }]
+      }];
+      questionErrors.value = [{}];
+      testPaperStore.currentCreatingTestPaperId = response.data.data;
+      // 跳转到编辑试卷页面
+      router.push('/createTestResults')
+    } else {
+      ElMessage.error('创建试卷失败, 请重试');
+      router.push('/');
+    }
+
   }
 
 };

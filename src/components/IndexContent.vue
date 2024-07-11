@@ -29,6 +29,9 @@
 </template>
 
 <script setup lang="ts">
+import {onBeforeMount, ref} from "vue";
+import {listAppVoByPageUsingPost} from "@/api/testPaperController";
+
 const testCards = [
   {
     testName: '测试名称',
@@ -73,6 +76,7 @@ const testCards = [
     picUrl: '../assets/logo.png',
   }
 ]
+
 
 </script>
 

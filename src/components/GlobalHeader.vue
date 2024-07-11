@@ -76,8 +76,7 @@ const doLogout = async () => {
   const response = await userLogoutUsingPost();
   if(response.data.code === 0){
     // 退出登录成功，清空用户信息
-    userStore.setLoginUser({});
-    userStore.setLoginStatus(false);
+    userStore.fetchLoginUser();
     // console.log("退出登录后，store中的信息：", userStore.loginUser, userStore.isLogin)
     // 跳转到首页
     await router.push('/');

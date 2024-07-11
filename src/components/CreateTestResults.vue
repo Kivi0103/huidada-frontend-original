@@ -58,8 +58,12 @@ import {
 } from 'element-plus';
 import router from "@/router";
 import {Plus} from "@element-plus/icons-vue";
+import {useTestPaperStore} from "@/stores/testPaperStore";
+import {addScoringResultUsingPost} from "@/api/scoringResultController";
 
-const testType = ref<number>(0);
+const testPaperStore = useTestPaperStore();
+
+const testType = ref(testPaperStore.currentCreatingTestPaper.type);
 
 interface CreateTestResultsProps {
   resultName: string;
@@ -138,7 +142,38 @@ const submitForm = async () => {
     }
   }
   if (allValid) {
-    console.log("提交表单中的数据",forms.value);
+    // console.log("提交表单中的数据",forms.value);
+    forms.value.forEach((form, index) => {
+      const result = {
+        resultName: form.resultName,
+        resultDesc: form.resultDesc,
+        resultPicture: form.resultPicture,
+        resultScoreRange: testType.value === 0 ? form.resultScoreRange :0,
+        resultProp: testType.value === 1 ? form.resultProp.split(',') : [],
+      }
+      testPaperStore.currentCreatingTestPaperScoringResults.scoringResults!.push(result);
+    })
+    testPaperStore.currentCreatingTestPaperScoringResults.testPaperId = testPaperStore.currentCreatingTestPaperId;
+    console.log("测试结果提交表单中的数据:",testPaperStore.currentCreatingTestPaperScoringResults);
+    const response = await addScoringResultUsingPost(testPaperStore.currentCreatingTestPaperScoringResults);
+    if(response.data.code === 0){
+      ElMessage.success('测试结果提交成功');
+    }else{
+      ElMessage.error('测试结果提交失败，'+response.data.message);
+    }
+    // 将表单数据清空
+    forms.value = [{
+      resultName: '',
+      resultDesc: '',
+      resultPicture: '',
+      resultScoreRange: 0,
+      resultProp: '',
+    }];
+    // store中的数据清空
+    testPaperStore.currentCreatingTestPaperScoringResults = {
+      scoringResults: [],
+      testPaperId: undefined,
+    };
     await router.push('/');
   } else {
     ElMessage.error('表单验证失败，请检查输入');

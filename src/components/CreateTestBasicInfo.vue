@@ -62,6 +62,7 @@ import {reactive, ref} from 'vue'
 import {Plus} from '@element-plus/icons-vue'
 import {type ComponentSize, ElMessage, type FormInstance, type FormRules, type UploadProps} from 'element-plus'
 import router from "@/router";
+import {useTestPaperStore} from "@/stores/testPaperStore";
 
 interface RuleForm {
   testName: string,
@@ -96,13 +97,6 @@ const rules = reactive<FormRules<RuleForm>>({
       trigger: 'change',
     },
   ],
-  bgPicture: [
-    {
-      required: true,
-      message: '请上传测试封面图片',
-      trigger: 'change',
-    },
-  ],
   type: [
     {
       required: true,
@@ -128,21 +122,27 @@ const rules = reactive<FormRules<RuleForm>>({
 
 const nextStep = async (formEl: FormInstance | undefined) => {
 
-  // if (!formEl) return
-  // await formEl.validate(async (valid, fields) => {
-  //   if (valid) {
-  //     console.log('submit!')
-  //       // TODO 验证通过后将表单信息存入store
-  //       await router.push('/createTestSecond')
-  //   } else {
-  //     console.log('error submit!', fields)
-  //   }
-  // })
+  if (!formEl) return
+  await formEl.validate(async (valid, fields) => {
+    if (valid) {
+      console.log('submit!')
+        const testPaperStore = useTestPaperStore();
+        testPaperStore.currentCreatingTestPaper.testName = ruleForm.testName
+        testPaperStore.currentCreatingTestPaper.description = ruleForm.description
+        testPaperStore.currentCreatingTestPaper.bgPicture = ruleForm.bgPicture
+        testPaperStore.currentCreatingTestPaper.type = ruleForm.type
+        testPaperStore.currentCreatingTestPaper.scoringStrategyType = ruleForm.scoringStrategy
+        testPaperStore.currentCreatingTestPaper.isAi = ruleForm.isAi
+        await router.push('/CreateTestQuestions')
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
 
   // TODO 此为测试临时代码，待等后续页面开发好后删除此处代码
-  if (true) {
-    await router.push('/CreateTestQuestions')
-  }
+  // if (true) {
+  //   await router.push('/CreateTestQuestions')
+  // }
 
 }
 
