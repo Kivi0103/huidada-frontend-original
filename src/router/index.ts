@@ -2,11 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import UserLoginView from "@/views/UserLoginView.vue";
 import UserRegisterView from "@/views/UserRegisterView.vue";
 import IndexContent from "@/components/IndexContent.vue";
-import CreateTest from "@/components/CreateTestBasicInfo.vue";
 import UserBasicView from "@/views/UserBasicView.vue";
 import CreateTestBasicInfo from "@/components/CreateTestBasicInfo.vue";
 import CreateTestQuestions from "@/components/CreateTestQuestions.vue";
 import CreateTestResults from "@/components/CreateTestResults.vue";
+import TestDetails from "@/components/TestDetails.vue";
+import AnsweringTest from "@/components/AnsweringTest.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +21,19 @@ const router = createRouter({
       path: '/CreateTestBasicInfo',
       name: '创建测试',
       component: CreateTestBasicInfo
+    },
+    {
+      path: '/TestDetails',
+      name: '某个测试详情页',
+      component: TestDetails
+    },
+    {
+      path: '/AnsweringTest',
+      name: '答题页面',
+      component: AnsweringTest,
+      meta: {
+        hideInMenu: false
+      }
     },
     {
       path: '/CreateTestQuestions',

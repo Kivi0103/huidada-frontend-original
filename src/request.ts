@@ -35,7 +35,7 @@ myAxios.interceptors.response.use(
         !window.location.pathname.includes("/user/login")
       ) {
         ElMessage.warning("请先登录");
-        window.location.href = `/user/login?redirect=${window.location.href}`;
+        window.location.href = `/user/login`;
       }
     }
 

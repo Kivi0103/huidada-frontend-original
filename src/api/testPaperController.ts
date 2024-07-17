@@ -17,6 +17,14 @@ export async function addTestPaperUsingPost(
   });
 }
 
+/** getCount GET /api/testPaper/getCount */
+export async function getCountUsingGet(options?: { [key: string]: any }) {
+  return request<API.BaseResponseLong_>('/api/testPaper/getCount', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
 /** listAppVOByPage POST /api/testPaper/list/page/vo */
 export async function listAppVoByPageUsingPost(
   body: API.TestPaperQueryRequestDTO,

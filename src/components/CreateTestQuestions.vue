@@ -31,9 +31,9 @@
             </el-col>
           </el-row>
         </div>
-        <el-button @click="addOption(qIndex)" type="primary">添加一个选项</el-button>
       </el-form-item>
-      <el-button @click="removeQuestion(qIndex)" type="danger">删除题目</el-button>
+      <el-button @click="addOption(qIndex)" type="primary">添加一个选项</el-button>
+      <el-button @click="removeQuestion(qIndex)" type="danger">删除该题目</el-button>
     </div>
     <el-button @click="addQuestion" type="primary">添加一道题目</el-button>
     <el-button type="primary" @click="submitForm">下一步</el-button>

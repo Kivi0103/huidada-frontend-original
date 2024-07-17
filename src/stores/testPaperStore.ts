@@ -13,5 +13,8 @@ export const useTestPaperStore = defineStore('testPaperStore', () => {
     const currentCreatingTestPaperId = ref<number>();
     // 当前创建的测试的评分结果集合
     const currentCreatingTestPaperScoringResults = reactive<API.ScoringResultAddRequestDTO>({scoringResults: [], testPaperId: currentCreatingTestPaperId.value})
-    return { currentCreatingTestPaper,currentCreatingTestPaperScoringResults,currentCreatingTestPaperId };
+
+    // 用户当前正在查看的测试信息
+    const currentViewingTestPaper = reactive<API.TestPaperVO>({})
+    return { currentCreatingTestPaper,currentCreatingTestPaperScoringResults,currentCreatingTestPaperId, currentViewingTestPaper };
 })
