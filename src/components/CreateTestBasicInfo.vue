@@ -36,13 +36,13 @@
         <el-radio :value="1">测评类</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="评分策略" prop="scoringStrategy">
+    <el-form-item label="评分策略是否需要使用AI生成" prop="scoringStrategy">
       <el-radio-group v-model="ruleForm.scoringStrategy">
         <el-radio :value="0">自定义</el-radio>
         <el-radio :value="1">AI评测</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="题目是否AI生成" prop="isAi">
+    <el-form-item label="题目是否需要使用AI生成" prop="isAi">
       <el-radio-group v-model="ruleForm.isAi">
         <el-radio :value="0">自定义</el-radio>
         <el-radio :value="1">AI生成</el-radio>
@@ -121,7 +121,6 @@ const rules = reactive<FormRules<RuleForm>>({
 })
 
 const nextStep = async (formEl: FormInstance | undefined) => {
-
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
@@ -133,7 +132,7 @@ const nextStep = async (formEl: FormInstance | undefined) => {
         testPaperStore.currentCreatingTestPaper.type = ruleForm.type
         testPaperStore.currentCreatingTestPaper.scoringStrategyType = ruleForm.scoringStrategy
         testPaperStore.currentCreatingTestPaper.isAi = ruleForm.isAi
-        await router.push('/CreateTestQuestions')
+        await router.push("/CreateTestQuestions")
     } else {
       console.log('error submit!', fields)
     }

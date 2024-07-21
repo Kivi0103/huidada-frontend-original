@@ -83,14 +83,24 @@
     </div>
   </el-row>
   <el-row>
-    <el-button type="primary" @click="router.push('/AnsweringTest')">开始测试</el-button>
+    <el-button type="primary" @click="startTest">开始测试</el-button>
   </el-row>
 </template>
 <script setup lang="ts">
 import {useTestPaperStore} from "@/stores/testPaperStore";
 import router from "@/router";
-
+import {ElMessage} from "element-plus";
+import {useUserStore} from "@/stores/userStore";
+const userStore = useUserStore();
 const viewingTest = useTestPaperStore().currentViewingTestPaper;
+const startTest = () => {
+  if( !userStore.isLogin){
+    ElMessage.error('请先登录');
+  }else{
+    router.push('/AnsweringTest');
+  }
+}
+
 
 </script>
 <style scoped>

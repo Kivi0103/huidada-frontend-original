@@ -36,16 +36,54 @@
       <el-button @click="removeQuestion(qIndex)" type="danger">删除该题目</el-button>
     </div>
     <el-button @click="addQuestion" type="primary">添加一道题目</el-button>
-    <el-button type="primary" @click="submitForm">下一步</el-button>
+    <el-button type="success" @click="submitForm">下一步</el-button>
+    <el-button type="primary" plain v-if="isAi === 1" @click="drawer = true">使用 AI 生成试题</el-button>
   </el-form>
+  <el-drawer
+      v-model="drawer"
+      title="AI 生成测试题目"
+      :direction="direction"
+  >
+    <el-row>
+    <div class="item-content" style="margin-bottom: 10px">
+      <el-text>
+        测试名称：
+      </el-text>
+      <el-text class="content">{{ creatingTestPaper.testName }}</el-text>
+    </div>
+    </el-row>
+    <el-row>
+      <div class="item-content" style="margin-bottom: 10px">
+        <el-text>
+          请填写以下必要信息：
+        </el-text>
+      </div>
+    </el-row>
+    <el-form-item>
+      <el-text>
+        题目数：
+      </el-text>
+      <el-input-number v-model="questionCount" :min="1" placeholder="题目数"></el-input-number>
+    </el-form-item>
+    <el-form-item>
+      <el-text>
+        每道题选项数：
+      </el-text>
+      <el-input-number v-model="optionCount" :min="2" placeholder="每道题选项数"></el-input-number>
+    </el-form-item>
+    <el-button @click="generating" type="primary" :loading="generatingLoading">
+      {{ generatingLoading ? '生成中...' : '生成试题' }}
+    </el-button>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
 import {reactive, ref} from 'vue'
-import {ElMessage} from 'element-plus'
+import {ElMessage } from 'element-plus'
 import router from "@/router";
 import {useTestPaperStore} from "@/stores/testPaperStore";
-import {addTestPaperUsingPost} from "@/api/testPaperController";
+import {addTestPaperUsingPost, aiGenerateQuestionUsingPost} from "@/api/testPaperController";
+import type { DrawerProps } from 'element-plus'
 
 
 interface Form {
@@ -76,8 +114,9 @@ const form = reactive<Form>({
 });
 
 const testPaperStore = useTestPaperStore();
+const creatingTestPaper = testPaperStore.currentCreatingTestPaper;
 const testType = ref(testPaperStore.currentCreatingTestPaper.type);
-
+const isAi = ref(testPaperStore.currentCreatingTestPaper.isAi);
 const questionErrors = ref<QuestionErrors[]>([{}]);
 
 const addQuestion = () => {
@@ -196,6 +235,35 @@ const submitForm = async () => {
   }
 
 };
+const drawer = ref(isAi.value === 1)
+const direction = ref<DrawerProps['direction']>('rtl')
+const questionCount = ref(1)
+const optionCount = ref(2)
+const generatingLoading = ref(false)
+
+const generating = async () => {
+  generatingLoading.value = true
+  const aiGenerateQuestionRequest = ref<API.AiGenerateQuestionRequestDTO>({
+    testName: creatingTestPaper.testName,
+    description: creatingTestPaper.description,
+    type: creatingTestPaper.type,
+    questionCount: questionCount.value,
+    optionCount: optionCount.value,
+  })
+  // 等待3秒
+  await new Promise(resolve => setTimeout(resolve, 3000))
+  const response = await aiGenerateQuestionUsingPost(aiGenerateQuestionRequest.value);
+  if(response.data.code === 0) {
+    console.log(response.data.data?.questionContent);
+    useTestPaperStore().currentCreatingTestPaper.questionContent = response.data.data?.questionContent;
+    form.questions = response.data.data?.questionContent;
+    ElMessage.success('生成试题成功, 请查看试题内容并自主修改');
+    drawer.value = false;
+  }else{
+    ElMessage.error('生成试题失败!'+response.data.message);
+  }
+  generatingLoading.value = false
+}
 </script>
 
 <style scoped>

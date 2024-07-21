@@ -1,4 +1,12 @@
 declare namespace API {
+  type AiGenerateQuestionRequestDTO = {
+    description?: string;
+    optionCount?: number;
+    questionCount?: number;
+    testName?: string;
+    type?: number;
+  };
+
   type BaseResponseBoolean_ = {
     code?: number;
     data?: boolean;
@@ -17,6 +25,24 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseQuestionContentVO_ = {
+    code?: number;
+    data?: QuestionContentVO;
+    message?: string;
+  };
+
+  type BaseResponseString_ = {
+    code?: number;
+    data?: string;
+    message?: string;
+  };
+
+  type BaseResponseTestResultVO_ = {
+    code?: number;
+    data?: TestResultVO;
+    message?: string;
+  };
+
   type BaseResponseUser_ = {
     code?: number;
     data?: User;
@@ -27,6 +53,13 @@ declare namespace API {
     code?: number;
     data?: UserVO;
     message?: string;
+  };
+
+  type CommitUserChoiceRequestDTO = {
+    choices?: string[];
+    scoringStrategyType?: number;
+    testPaperId?: number;
+    type?: number;
   };
 
   type Option = {
@@ -52,6 +85,11 @@ declare namespace API {
     searchCount?: boolean;
     size?: number;
     total?: number;
+  };
+
+  type QuestionContentVO = {
+    questionContent?: QuestionItem[];
+    testPaperId?: number;
   };
 
   type QuestionItem = {
@@ -103,7 +141,7 @@ declare namespace API {
     bgPicture?: string;
     createTime?: string;
     description?: string;
-    id?: number;
+    id?: string;
     isAi?: number;
     isDelete?: number;
     questionContent?: QuestionItem[];
@@ -113,6 +151,14 @@ declare namespace API {
     updateTime?: string;
     userId?: number;
     userName?: string;
+  };
+
+  type TestResultVO = {
+    createTime?: string;
+    resultDesc?: string;
+    resultName?: string;
+    resultPicture?: string;
+    score?: number;
   };
 
   type User = {

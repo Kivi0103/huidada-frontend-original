@@ -20,6 +20,8 @@
 import {ref} from 'vue';
 import {useTestPaperStore} from "@/stores/testPaperStore";
 import {ElMessage} from "element-plus";
+import {submitCustomAnswerUsingPost} from "@/api/userAnswerController";
+import {all} from "axios";
 const questions = useTestPaperStore().currentViewingTestPaper.questionContent;
 const number = ref(0);
 const choices = ref<string[]>([]); // 初始化为空数组
@@ -32,12 +34,36 @@ const beforeQuestion = () => {
   }
 }
 
-const nextQuestion = () => {
+const nextQuestion = async () => {
   if (number.value < questions!.length - 1) {
     number.value++;
   } else {
-    // TODO: 提交答案
-    ElMessage.success('答卷提交成功: ' + choices.value.toString());
+    // 检查是否每道题都作答了
+    let allAnswered = true;
+    console.log("选择的所有答案:"+choices.value.length)
+    if(choices.value.length < questions!.length){
+      allAnswered = false;
+      ElMessage.warning('请先作答所有题目');
+    }
+    // 若每道题都作答了，则提交答案
+    if (allAnswered) {
+      const answer = ref<API.CommitUserChoiceRequestDTO>({
+        choices: choices.value,
+        scoringStrategyType: useTestPaperStore().currentViewingTestPaper.scoringStrategyType,
+        testPaperId: useTestPaperStore().currentViewingTestPaper.id,
+        type: useTestPaperStore().currentViewingTestPaper.type
+      })
+      const response = await submitCustomAnswerUsingPost(answer.value)
+      if (response.data.code === 0) {
+        if(answer.value.type === 0){
+          ElMessage.success('提交成功，你的得分为：'+response.data.data!.score);
+        }
+        ElMessage.success('被评为：'+response.data.data!.resultName+"，"+response.data.data!.resultDesc);
+        console.log(response.data.data)
+      }else{
+        ElMessage.error("答案提交失败"+response.data.message);
+      }
+    }
   }
 }
 </script>
