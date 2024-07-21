@@ -8,6 +8,7 @@ import CreateTestQuestions from "@/components/CreateTestQuestions.vue";
 import CreateTestResults from "@/components/CreateTestResults.vue";
 import TestDetails from "@/components/TestDetails.vue";
 import AnsweringTest from "@/components/AnsweringTest.vue";
+import OneAnswerShow from "@/components/OneAnswerShow.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,6 +56,11 @@ const router = createRouter({
       path: '/test',
       name: '创建测试答案列表',
       component: CreateTestResults
+    },
+    {
+      path: '/oneAnswerShow',
+      name: '一个结果展示页面',
+      component: OneAnswerShow
     },
     {
       path: '/create2',

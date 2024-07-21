@@ -19,9 +19,10 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import {useTestPaperStore} from "@/stores/testPaperStore";
-import {ElMessage} from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 import {submitCustomAnswerUsingPost} from "@/api/userAnswerController";
-import {all} from "axios";
+import {useAnswerStore} from "@/stores/answerStore";
+import router from "@/router";
 const questions = useTestPaperStore().currentViewingTestPaper.questionContent;
 const number = ref(0);
 const choices = ref<string[]>([]); // 初始化为空数组
@@ -53,13 +54,14 @@ const nextQuestion = async () => {
         testPaperId: useTestPaperStore().currentViewingTestPaper.id,
         type: useTestPaperStore().currentViewingTestPaper.type
       })
+      // 遮掩加载层
+      const loadingInstance = ElLoading.service({fullscreen: true, text: '测评中...'})
       const response = await submitCustomAnswerUsingPost(answer.value)
+      loadingInstance.close();
       if (response.data.code === 0) {
-        if(answer.value.type === 0){
-          ElMessage.success('提交成功，你的得分为：'+response.data.data!.score);
-        }
-        ElMessage.success('被评为：'+response.data.data!.resultName+"，"+response.data.data!.resultDesc);
-        console.log(response.data.data)
+        ElMessage.success("作答完成！");
+        useAnswerStore().viewingAnswer = response.data.data
+        await router.push("/OneAnswerShow")
       }else{
         ElMessage.error("答案提交失败"+response.data.message);
       }

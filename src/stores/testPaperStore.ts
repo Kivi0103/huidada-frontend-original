@@ -1,7 +1,5 @@
 import {ref, computed, reactive} from 'vue'
 import { defineStore } from 'pinia'
-import {getLoginUserUsingGet} from "@/api/userController";
-import ACCESS_ENUM from "@/access/accessEnum";
 
 /**
  * 登录用户信息全局状态

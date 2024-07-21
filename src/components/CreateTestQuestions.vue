@@ -79,7 +79,7 @@
 
 <script setup lang="ts">
 import {reactive, ref} from 'vue'
-import {ElMessage } from 'element-plus'
+import {ElLoading, ElMessage} from 'element-plus'
 import router from "@/router";
 import {useTestPaperStore} from "@/stores/testPaperStore";
 import {addTestPaperUsingPost, aiGenerateQuestionUsingPost} from "@/api/testPaperController";
@@ -250,9 +250,9 @@ const generating = async () => {
     questionCount: questionCount.value,
     optionCount: optionCount.value,
   })
-  // 等待3秒
-  await new Promise(resolve => setTimeout(resolve, 3000))
+  const loadingInstance = ElLoading.service({fullscreen: true, text: 'AI生成试题中，请稍候...'})
   const response = await aiGenerateQuestionUsingPost(aiGenerateQuestionRequest.value);
+  loadingInstance.close()
   if(response.data.code === 0) {
     console.log(response.data.data?.questionContent);
     useTestPaperStore().currentCreatingTestPaper.questionContent = response.data.data?.questionContent;
