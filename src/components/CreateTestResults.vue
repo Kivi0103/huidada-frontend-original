@@ -43,11 +43,12 @@
     </div>
     <el-button @click="addResultForm">添加一个结果</el-button>
     <el-button type="primary" @click="submitForm">提交</el-button>
+    <el-button type="default" @click="checkout">jijdoa</el-button>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import {onBeforeMount, ref} from 'vue';
 import {
   ElForm,
   ElFormItem,
@@ -61,11 +62,17 @@ import {Plus} from "@element-plus/icons-vue";
 import {useTestPaperStore} from "@/stores/testPaperStore";
 import {addScoringResultUsingPost} from "@/api/scoringResultController";
 
+const checkout = () => {
+  console.log("checkout:", testPaperStore.currentCreatingTestPaperScoringResults.scoringResults);
+  console.log("checkout1111:", forms.value);
+};
+
 const testPaperStore = useTestPaperStore();
 
 const testType = ref(testPaperStore.currentCreatingTestPaper.type);
 
 interface CreateTestResultsProps {
+  id: string;
   resultName: string;
   resultDesc: string;
   resultPicture: string;
@@ -73,13 +80,16 @@ interface CreateTestResultsProps {
   resultProp: string;
 }
 
-const forms = ref<CreateTestResultsProps[]>([{
-  resultName: '',
-  resultDesc: '',
-  resultPicture: '',
-  resultScoreRange: 0,
-  resultProp: '',
-}]);
+const forms = ref<CreateTestResultsProps[]>(useTestPaperStore().currentCreatingTestPaperScoringResults.scoringResults?.map(result=>{
+  return {
+    id: result.id,
+    resultName: result.resultName,
+    resultDesc: result.resultDesc,
+    resultPicture: result.resultPicture,
+    resultScoreRange: result.resultScoreRange,
+    resultProp: result.resultProp.join(','),
+  }
+}));
 
 const rules = {
   resultName: [{ required: true, message: '请输入结果名称', trigger: 'blur' }],
@@ -89,6 +99,7 @@ const rules = {
 
 const addResultForm = () => {
   forms.value.push({
+    id: null,
     resultName: '',
     resultDesc: '',
     resultPicture: '',
@@ -145,6 +156,7 @@ const submitForm = async () => {
     // console.log("提交表单中的数据",forms.value);
     forms.value.forEach((form, index) => {
       const result = {
+        id: form.id,
         resultName: form.resultName,
         resultDesc: form.resultDesc,
         resultPicture: form.resultPicture,

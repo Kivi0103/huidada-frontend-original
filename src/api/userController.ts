@@ -47,3 +47,33 @@ export async function userRegisterUsingPost(
     ...(options || {}),
   });
 }
+
+/** userUpdatePassword POST /api/user/updatePassword */
+export async function userUpdatePasswordUsingPost(
+  body: API.UserUpdateRequestDTO,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/updatePassword', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** userUpdateUserName POST /api/user/updateUserName */
+export async function userUpdateUserNameUsingPost(
+  body: API.UserUpdateRequestDTO,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/updateUserName', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}

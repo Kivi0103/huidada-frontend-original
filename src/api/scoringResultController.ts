@@ -16,3 +16,18 @@ export async function addScoringResultUsingPost(
     ...(options || {}),
   });
 }
+
+/** getScoringResultById POST /api/scoringResult/listByTestId */
+export async function listByTestId(
+  body: API.GetScoringResultByIdRequestDTO,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseScoringResultAddRequestDTO_>('/api/scoringResult/listByTestId', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}

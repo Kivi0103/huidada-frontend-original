@@ -25,15 +25,33 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponsePageUserAnswerVO_ = {
+    code?: number;
+    data?: PageUserAnswerVO_;
+    message?: string;
+  };
+
   type BaseResponseQuestionContentVO_ = {
     code?: number;
     data?: QuestionContentVO;
     message?: string;
   };
 
+  type BaseResponseScoringResultAddRequestDTO_ = {
+    code?: number;
+    data?: ScoringResultAddRequestDTO;
+    message?: string;
+  };
+
   type BaseResponseString_ = {
     code?: number;
     data?: string;
+    message?: string;
+  };
+
+  type BaseResponseTestPaperVO_ = {
+    code?: number;
+    data?: TestPaperVO;
     message?: string;
   };
 
@@ -62,6 +80,18 @@ declare namespace API {
     type?: number;
   };
 
+  type DeleteTestPaperDTO = {
+    id?: string;
+  };
+
+  type GetScoringResultByIdRequestDTO = {
+    testId?: string;
+  };
+
+  type GetTestPaperByIdDTO = {
+    id?: string;
+  };
+
   type Option = {
     key?: string;
     optionDesc?: string;
@@ -87,9 +117,22 @@ declare namespace API {
     total?: number;
   };
 
+  type PageUserAnswerVO_ = {
+    countId?: string;
+    current?: number;
+    maxLimit?: number;
+    optimizeCountSql?: boolean;
+    orders?: OrderItem[];
+    pages?: number;
+    records?: UserAnswerVO[];
+    searchCount?: boolean;
+    size?: number;
+    total?: number;
+  };
+
   type QuestionContentVO = {
     questionContent?: QuestionItem[];
-    testPaperId?: number;
+    testPaperId?: string;
   };
 
   type QuestionItem = {
@@ -103,6 +146,7 @@ declare namespace API {
   };
 
   type ScoringResultItem = {
+    id?: string;
     resultDesc?: string;
     resultName?: string;
     resultPicture?: string;
@@ -113,6 +157,7 @@ declare namespace API {
   type TestPaperAddRequestDTO = {
     bgPicture?: string;
     description?: string;
+    id?: string;
     isAi?: number;
     questionContent?: QuestionItem[];
     scoringStrategyType?: number;
@@ -123,7 +168,7 @@ declare namespace API {
   type TestPaperQueryRequestDTO = {
     current?: number;
     description?: string;
-    id?: number;
+    id?: string;
     isAi?: number;
     pageSize?: number;
     reviewMessage?: string;
@@ -137,9 +182,8 @@ declare namespace API {
     userId?: number;
   };
 
-  type TestPaperVO = {
+  type TestPaperUpdateRequestDTO = {
     bgPicture?: string;
-    createTime?: string;
     description?: string;
     id?: string;
     isAi?: number;
@@ -148,8 +192,23 @@ declare namespace API {
     scoringStrategyType?: number;
     testName?: string;
     type?: number;
+  };
+
+  type TestPaperVO = {
+    bgPicture?: string;
+    createTime?: string;
+    description?: string;
+    id?: string;
+    isAi?: number;
+    isDelete?: number;
+    questionContent?: QuestionItem[];
+    reviewMessage?: string;
+    reviewStatus?: number;
+    scoringStrategyType?: number;
+    testName?: string;
+    type?: number;
     updateTime?: string;
-    userId?: number;
+    userId?: string;
     userName?: string;
   };
 
@@ -181,15 +240,55 @@ declare namespace API {
     userName?: string;
   };
 
+  type UserAnswerQueryRequestDTO = {
+    current?: number;
+    id?: number;
+    pageSize?: number;
+    scoringResultId?: number;
+    scoringType?: number;
+    sortField?: string;
+    sortOrder?: string;
+    testPaperId?: number;
+    userId?: string;
+  };
+
+  type UserAnswerVO = {
+    answeredUserName?: string;
+    choices?: string;
+    createTime?: string;
+    id?: string;
+    questionContent?: string;
+    resultDesc?: string;
+    resultName?: string;
+    score?: number;
+    scoringResultId?: number;
+    scoringStrategyType?: number;
+    scoringType?: number;
+    testDesc?: string;
+    testPaperId?: number;
+    testPaperName?: string;
+    testPaperType?: number;
+    updateTime?: string;
+    userId?: string;
+  };
+
   type UserLoginRequestDTO = {
     password?: string;
+    userName?: string;
+  };
+
+  type UserUpdateRequestDTO = {
+    headPicture?: string;
+    id?: string;
+    newPassword?: string;
+    oldPassword?: string;
     userName?: string;
   };
 
   type UserVO = {
     createTime?: string;
     headPicture?: string;
-    id?: number;
+    id?: string;
     role?: string;
     updateTime?: string;
     userName?: string;

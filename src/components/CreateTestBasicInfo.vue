@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref} from 'vue'
+import {onBeforeMount, reactive, ref} from 'vue'
 import {Plus} from '@element-plus/icons-vue'
 import {type ComponentSize, ElMessage, type FormInstance, type FormRules, type UploadProps} from 'element-plus'
 import router from "@/router";
@@ -73,16 +73,18 @@ interface RuleForm {
   isAi: number
 }
 
+const testPaperStore = useTestPaperStore();
 const formSize = ref<ComponentSize>('default')
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive<RuleForm>({
-  testName: '',
-  description: '',
-  bgPicture: '',
-  type: 0,
-  scoringStrategy: 0,
-  isAi: 0
+  testName: testPaperStore.currentCreatingTestPaper.testName,
+  description: testPaperStore.currentCreatingTestPaper.description,
+  bgPicture: testPaperStore.currentCreatingTestPaper.bgPicture,
+  type: testPaperStore.currentCreatingTestPaper.type,
+  scoringStrategy: testPaperStore.currentCreatingTestPaper.scoringStrategyType,
+  isAi: testPaperStore.currentCreatingTestPaper.isAi
 })
+
 
 
 const rules = reactive<FormRules<RuleForm>>({
@@ -125,7 +127,6 @@ const nextStep = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       console.log('submit!')
-        const testPaperStore = useTestPaperStore();
         testPaperStore.currentCreatingTestPaper.testName = ruleForm.testName
         testPaperStore.currentCreatingTestPaper.description = ruleForm.description
         testPaperStore.currentCreatingTestPaper.bgPicture = ruleForm.bgPicture
@@ -137,11 +138,6 @@ const nextStep = async (formEl: FormInstance | undefined) => {
       console.log('error submit!', fields)
     }
   })
-
-  // TODO 此为测试临时代码，待等后续页面开发好后删除此处代码
-  // if (true) {
-  //   await router.push('/CreateTestQuestions')
-  // }
 
 }
 

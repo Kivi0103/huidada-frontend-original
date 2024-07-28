@@ -26,12 +26,11 @@
               </el-link>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="$router.push('/userCenter')" divided>用户中心</el-dropdown-item>
+                  <el-dropdown-item @click="$router.push('/infoOfUser')">个人中心</el-dropdown-item>
                   <el-dropdown-item @click="doLogout" divided>退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
-
           </div>
         </div>
       </el-menu>
@@ -45,6 +44,7 @@ import router from "@/router";
 import {useUserStore} from "@/stores/userStore";
 import {userLogoutUsingPost} from "@/api/userController";
 import {ElMessage} from "element-plus";
+import {useTestPaperStore} from "@/stores/testPaperStore";
 
 const userStore = useUserStore();
 
@@ -65,8 +65,12 @@ router.afterEach(() => {
 const handleSelect = (key: string) => {
   // 点击菜单项，跳转到对应的路由
   if( key !== '/' && !userStore.isLogin){
-    ElMessage.error('请先登录');
+    ElMessage.error('请先登录!');
   }else{
+    if(key==="/CreateTestBasicInfo"||key==="/CreateTestQuestions"||key==="/CreateTestResult"){
+      useTestPaperStore().isUpdate = false;
+      useTestPaperStore().start();
+    }
     router.push(key);
   }
 }

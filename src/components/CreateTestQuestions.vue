@@ -101,23 +101,15 @@ interface QuestionErrors {
   options?: OptionErrors[];
 }
 
-const form = reactive<Form>({
-  questions: [{
-    questionDesc: '',
-    options: [{
-      key: 'A',
-      optionDesc: '',
-      score: 0,
-      result: ''
-    }]
-  }]
-});
-
 const testPaperStore = useTestPaperStore();
 const creatingTestPaper = testPaperStore.currentCreatingTestPaper;
 const testType = ref(testPaperStore.currentCreatingTestPaper.type);
 const isAi = ref(testPaperStore.currentCreatingTestPaper.isAi);
 const questionErrors = ref<QuestionErrors[]>([{}]);
+
+const form = reactive<Form>({
+  questions: creatingTestPaper.questionContent
+});
 
 const addQuestion = () => {
   form.questions.push({

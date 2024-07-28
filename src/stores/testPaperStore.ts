@@ -6,13 +6,44 @@ import { defineStore } from 'pinia'
  */
 export const useTestPaperStore = defineStore('testPaperStore', () => {
     // 当前创建的一个测试信息
-    const currentCreatingTestPaper = reactive<API.TestPaperAddRequestDTO>({
+    const currentCreatingTestPaper = ref<API.TestPaperAddRequestDTO>({
+    questionContent: [
+        {
+            questionDesc: '',
+            options: [{
+                key: 'A',
+                optionDesc: '',
+                score: 0,
+                result: ''
+            }]
+        }
+    ]
     });
     const currentCreatingTestPaperId = ref<number>();
     // 当前创建的测试的评分结果集合
-    const currentCreatingTestPaperScoringResults = reactive<API.ScoringResultAddRequestDTO>({scoringResults: [], testPaperId: currentCreatingTestPaperId.value})
-
+    const currentCreatingTestPaperScoringResults = ref<API.ScoringResultAddRequestDTO>({scoringResults: [], testPaperId: currentCreatingTestPaperId.value})
+    const isUpdate = ref<boolean>(false);
     // 用户当前正在查看的测试信息
     const currentViewingTestPaper = reactive<API.TestPaperVO>({})
-    return { currentCreatingTestPaper,currentCreatingTestPaperScoringResults,currentCreatingTestPaperId, currentViewingTestPaper };
+    const start = ()=>{
+        currentCreatingTestPaper.value = {
+            questionContent: [
+                {
+                    questionDesc: '',
+                    options: [{
+                        key: 'A',
+                        optionDesc: '',
+                        score: 0,
+                        result: ''
+                    }]
+                }
+            ]
+        }
+        currentCreatingTestPaperId.value = undefined;
+        currentCreatingTestPaperScoringResults.value = {scoringResults: [], testPaperId: currentCreatingTestPaperId.value};
+        isUpdate.value = false;
+    }
+
+    return { currentCreatingTestPaper,currentCreatingTestPaperScoringResults,currentCreatingTestPaperId, currentViewingTestPaper
+    , isUpdate, start };
 })

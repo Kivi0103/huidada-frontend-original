@@ -9,13 +9,15 @@ import CreateTestResults from "@/components/CreateTestResults.vue";
 import TestDetails from "@/components/TestDetails.vue";
 import AnsweringTest from "@/components/AnsweringTest.vue";
 import OneAnswerShow from "@/components/OneAnswerShow.vue";
+import UserInfoView from "@/views/TestUserInfoView.vue";
+import TestUserInfoView from "@/views/TestUserInfoView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: '主页',
+      name: '首页',
       component: IndexContent
     },
     {
@@ -26,14 +28,17 @@ const router = createRouter({
     {
       path: '/TestDetails',
       name: '某个测试详情页',
-      component: TestDetails
+      component: TestDetails,
+      meta: {
+        hideInMenu: true
+      }
     },
     {
       path: '/AnsweringTest',
       name: '答题页面',
       component: AnsweringTest,
       meta: {
-        hideInMenu: false
+        hideInMenu: true
       }
     },
     {
@@ -52,20 +57,31 @@ const router = createRouter({
         hideInMenu: true
       }
     },
-    {
-      path: '/test',
-      name: '创建测试答案列表',
-      component: CreateTestResults
-    },
+    // {
+    //   path: '/test',
+    //   name: '创建测试答案列表',
+    //   component: CreateTestResults
+    // },
     {
       path: '/oneAnswerShow',
-      name: '一个结果展示页面',
-      component: OneAnswerShow
+      name: '结果展示页面',
+      component: OneAnswerShow,
+      meta: {
+        hideInMenu: true
+      }
     },
+    // {
+    //   path: '/create2',
+    //   name: '创建测试问题列表',
+    //   component: CreateTestQuestions
+    // },
     {
-      path: '/create2',
-      name: '创建测试问题列表',
-      component: CreateTestQuestions
+      path: '/infoOfUser',
+      name: '用户个人主页',
+      component: TestUserInfoView,
+      meta: {
+        hideInMenu: false
+      }
     },
     {
       path: '/user',
@@ -87,7 +103,7 @@ const router = createRouter({
           meta: {
             hideInMenu: true
           }
-        }
+        },
       ],
       meta:{
         hideInMenu: true
