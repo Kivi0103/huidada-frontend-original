@@ -220,6 +220,10 @@ declare namespace API {
     score?: number;
   };
 
+  type uploadFileUsingPOSTParams = {
+    biz?: string;
+  };
+
   type User = {
     createTime?: string;
     headPicture?: string;

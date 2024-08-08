@@ -1,13 +1,22 @@
 <template>
   <el-row>
     <el-tooltip content="修改头像" placement="bottom" effect="light">
-      <el-link :underline="false">
-        <el-avatar :size="50" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"/>
-      </el-link>
+      <el-upload
+          class="bgPicture-uploader"
+          action=""
+          :http-request="uploadBgPicture"
+          :show-file-list="false"
+          :before-upload="beforeBgPictureUpload"
+      >
+        <img v-if="loginUser.headPicture" :src="loginUser.headPicture" class="bgPicture" alt=""/>
+        <el-icon v-else class="bgPicture-uploader-icon">
+          <Plus/>
+        </el-icon>
+      </el-upload>
     </el-tooltip>
     <el-tooltip v-if="!ifModifyUserName" content="修改用户名" placement="bottom" effect="light" >
       <el-link :underline="false" style="margin-left: 20px;font-size: 16px" @click="ifModifyUserName = true">
-        {{ loginUser.userName }}
+        用户名：{{ loginUser.userName }}
       </el-link>
     </el-tooltip>
     <el-form v-else>
@@ -21,7 +30,7 @@
       </el-row>
     </el-form>
     <el-tooltip content="修改密码" placement="right">
-      <el-button type="primary" plain style="margin-top: 10px;margin-left: 20px" @click="showModifyPasswordDialog">
+      <el-button type="primary" plain style="margin-top: 35px;margin-left: 20px" @click="showModifyPasswordDialog">
         修改密码
       </el-button>
     </el-tooltip>
@@ -118,12 +127,17 @@ import {
   listAppVoByPageUsingPost
 } from "@/api/testPaperController";
 import { getUserAnswerCountUsingPost, listUserAnswerVoByPageUsingPost } from "@/api/userAnswerController";
-import {userUpdatePasswordUsingPost, userUpdateUserNameUsingPost} from "@/api/userController";
+import {
+  updateHeadPictureUsingPost,
+  userUpdatePasswordUsingPost,
+  userUpdateUserNameUsingPost
+} from "@/api/userController";
 import router from "@/router";
-import {ElMessage} from "element-plus";
+import {ElMessage, type UploadProps} from "element-plus";
 import {useTestPaperStore} from "@/stores/testPaperStore";
 import {listByTestId} from "@/api/scoringResultController";
-import * as url from "node:url";
+import {Plus} from "@element-plus/icons-vue";
+import {uploadFileUsingPost} from "@/api/fileController";
 
 const loginUser = useUserStore().loginUser;
 const myTests = ref();
@@ -309,10 +323,11 @@ const commitModifyUserName = async () => {
     if (response.data.code === 0) {
       ifModifyUserName.value = false;
       loginUser.userName = newUserName.value;
-      ElMessage.success("修改用户名成功！")
       // 回到首页并刷新页面
       await router.push("/");
+      ElMessage.success("修改用户名成功！请重新登录")
       window.location.reload();
+      ifModifyUserName.value = false;
     }else{
       alert("修改用户名失败：" + response.data.message);
     }
@@ -343,7 +358,7 @@ const modifyTest =async (id: string) => {
     }
     await router.push("/CreateTestBasicInfo");
   }else{
-    alert("根据id查询测试失败：" + response2.data.message);
+    alert("根据id查询测试失败：" + response.data.message);
   }
 }
 
@@ -357,6 +372,44 @@ const deleteTest = async (id: string) => {
     alert("删除测试失败：" + response.data.message);
   }
 }
+
+// 文件上传函数
+const uploadBgPicture = async ({ file, onSuccess, onError }) => {
+  try {
+    const params = <API.uploadFileUsingPOSTParams>({biz: 'user_avatar'}); // 根据需要设置请求参数
+    const body = {}; // 根据需要设置请求体内容
+    const options = {}; // 根据需要设置其他选项
+
+    const response = await uploadFileUsingPost(params, body, file, options);
+    console.log("上传照片返回的数据：", response.data)
+    if (response.data.code === 0) {
+      loginUser.headPicture =response.data.data
+      const userUpdateRequest = ref<API.UserUpdateRequestDTO>({
+        id: loginUser.id.toString(),
+        headPicture: loginUser.headPicture,
+      })
+      const response1 = await updateHeadPictureUsingPost(userUpdateRequest.value);
+      if (response1.data.code === 0) {
+        onSuccess(response.data);
+        ElMessage.success('头像上传成功');
+      }
+    }
+  } catch (error) {
+    onError(error);
+    ElMessage.error('头像上传失败');
+  }
+};
+
+const beforeBgPictureUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png') {
+    ElMessage.error('图片格式必须是 JPG 或 PNG!')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 2) {
+    ElMessage.error('图片大小不能超过2MB!')
+    return false
+  }
+  return true
+}
 </script>
 
 <style scoped>
@@ -366,5 +419,11 @@ const deleteTest = async (id: string) => {
 
 .el-icon:hover {
   cursor: pointer;
+}
+
+.bgPicture-uploader .bgPicture {
+  width: 100px;
+  height: 100px;
+  display: block;
 }
 </style>

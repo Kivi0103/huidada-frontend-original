@@ -20,7 +20,7 @@
             <el-dropdown>
               <el-link class="user-name" :underline="false">
                 <el-avatar
-                    src="{{loginUser.headPicture}}"
+                    :src="userStore.loginUser.headPicture"
                 />
                 <div style="margin-left: 10px">{{ userStore.loginUser.userName }}</div>
               </el-link>

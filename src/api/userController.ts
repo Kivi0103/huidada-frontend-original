@@ -48,6 +48,21 @@ export async function userRegisterUsingPost(
   });
 }
 
+/** updateHeadPicture POST /api/user/updateHeadPicture */
+export async function updateHeadPictureUsingPost(
+    body: API.UserUpdateRequestDTO,
+    options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/updateHeadPicture', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** userUpdatePassword POST /api/user/updatePassword */
 export async function userUpdatePasswordUsingPost(
   body: API.UserUpdateRequestDTO,

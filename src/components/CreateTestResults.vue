@@ -11,13 +11,14 @@
         </el-form-item>
         <el-form-item :label="'上传结果'+ (index + 1) +'图片'" prop="resultPicture">
           <el-upload
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :on-success="handleUploadSuccess(index)"
-              class="picture-uploader"
-              :show-file-list=false
+              class="bgPicture-uploader"
+              action=""
+              :http-request="uploadBgPicture(index)"
+              :show-file-list="false"
+              :before-upload="beforeBgPictureUpload"
           >
-            <img v-if="form.resultPicture" :src="form.resultPicture" class="picture" alt=""/>
-            <el-icon v-else class="picture-uploader-icon">
+            <img v-if="form.resultPicture" :src="form.resultPicture" class="bgPicture" alt=""/>
+            <el-icon v-else class="bgPicture-uploader-icon">
               <Plus/>
             </el-icon>
           </el-upload>
@@ -55,12 +56,13 @@ import {
   ElInput,
   ElButton,
   ElUpload,
-  ElMessage,
+  ElMessage, type UploadProps,
 } from 'element-plus';
 import router from "@/router";
 import {Plus} from "@element-plus/icons-vue";
 import {useTestPaperStore} from "@/stores/testPaperStore";
 import {addScoringResultUsingPost} from "@/api/scoringResultController";
+import {uploadFileUsingPost} from "@/api/fileController";
 
 const checkout = () => {
   console.log("checkout:", testPaperStore.currentCreatingTestPaperScoringResults.scoringResults);
@@ -70,6 +72,8 @@ const checkout = () => {
 const testPaperStore = useTestPaperStore();
 
 const testType = ref(testPaperStore.currentCreatingTestPaper.type);
+
+const imgUrl = ref('')
 
 interface CreateTestResultsProps {
   id: string;
@@ -108,8 +112,8 @@ const addResultForm = () => {
   });
 };
 
-const handleUploadSuccess = (index: number) => (response: any) => {
-  forms.value[index].resultPicture = response.url;
+const handleUploadSuccess = (index: number) => {
+  forms.value[index].resultPicture = imgUrl.value;
 };
 
 const handleTestTypeChange = (index: number) => {
@@ -119,6 +123,7 @@ const handleTestTypeChange = (index: number) => {
 
 const removeResultForm = (index: number) => {
   forms.value.splice(index, 1);
+  console.log("删除后的表单：",forms.value);
 };
 
 const submitForm = async () => {
@@ -191,6 +196,37 @@ const submitForm = async () => {
     ElMessage.error('表单验证失败，请检查输入');
   }
 };
+
+// 文件上传函数
+const uploadBgPicture = (index) => async ({ file, onSuccess, onError }) => {
+  try {
+    const params = <API.uploadFileUsingPOSTParams>({biz: 'app_icon'}); // 根据需要设置请求参数
+    const body = {}; // 根据需要设置请求体内容
+    const options = {}; // 根据需要设置其他选项
+
+    const response = await uploadFileUsingPost(params, body, file, options);
+    console.log("上传照片返回的数据：", response.data)
+    if (response.data.code === 0) {
+      forms.value[index].resultPicture = response.data.data
+      onSuccess(response.data);
+      ElMessage.success('图片上传成功');
+    }
+  } catch (error) {
+    onError(error);
+    ElMessage.error('图片上传失败');
+  }
+};
+
+const beforeBgPictureUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png') {
+    ElMessage.error('图片格式必须是 JPG 或 PNG!')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 2) {
+    ElMessage.error('图片大小不能超过2MB!')
+    return false
+  }
+  return true
+}
 </script>
 
 <style scoped>
@@ -201,6 +237,12 @@ const submitForm = async () => {
   margin-bottom: 20px;
 }
 .picture-uploader .picture {
+  width: 100px;
+  height: 100px;
+  display: block;
+}
+
+.bgPicture-uploader .bgPicture {
   width: 100px;
   height: 100px;
   display: block;

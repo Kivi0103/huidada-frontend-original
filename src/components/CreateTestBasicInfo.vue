@@ -19,12 +19,12 @@
     <el-form-item label="封面图片" prop="bgPicture">
       <el-upload
           class="bgPicture-uploader"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+          action=""
+          :http-request="uploadBgPicture"
           :show-file-list="false"
-          :on-success="handleBgPictureSuccess"
           :before-upload="beforeBgPictureUpload"
       >
-        <img v-if="imageUrl" :src="imageUrl" class="bgPicture" alt=""/>
+        <img v-if="ruleForm.bgPicture" :src="ruleForm.bgPicture" class="bgPicture" alt=""/>
         <el-icon v-else class="bgPicture-uploader-icon">
           <Plus/>
         </el-icon>
@@ -58,11 +58,12 @@
 </template>
 
 <script lang="ts" setup>
-import {onBeforeMount, reactive, ref} from 'vue'
+import { reactive, ref} from 'vue'
 import {Plus} from '@element-plus/icons-vue'
 import {type ComponentSize, ElMessage, type FormInstance, type FormRules, type UploadProps} from 'element-plus'
 import router from "@/router";
 import {useTestPaperStore} from "@/stores/testPaperStore";
+import {uploadFileUsingPost} from "@/api/fileController";
 
 interface RuleForm {
   testName: string,
@@ -146,14 +147,26 @@ const resetForm = (formEl: FormInstance | undefined) => {
   formEl.resetFields()
 }
 
-const imageUrl = ref('')
 
-const handleBgPictureSuccess: UploadProps['onSuccess'] = (
-    response,
-    uploadFile
-) => {
-  imageUrl.value = URL.createObjectURL(uploadFile.raw!)
-}
+// 文件上传函数
+const uploadBgPicture = async ({ file, onSuccess, onError }) => {
+  try {
+    const params = <API.uploadFileUsingPOSTParams>({biz: 'app_icon'}); // 根据需要设置请求参数
+    const body = {}; // 根据需要设置请求体内容
+    const options = {}; // 根据需要设置其他选项
+
+    const response = await uploadFileUsingPost(params, body, file, options);
+    console.log("上传照片返回的数据：", response.data)
+    if (response.data.code === 0) {
+      ruleForm.bgPicture =response.data.data
+      onSuccess(response.data);
+      ElMessage.success('图片上传成功');
+    }
+  } catch (error) {
+    onError(error);
+    ElMessage.error('图片上传失败');
+  }
+};
 
 const beforeBgPictureUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png') {
