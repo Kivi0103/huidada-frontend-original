@@ -20,7 +20,13 @@
 import GlobalHeader from "@/components/GlobalHeader.vue";
 import {useRoute} from "vue-router";
 import UserBasicView from "@/views/UserBasicView.vue";
+import { useUserStore } from "./stores/userStore";
+
+// 实现一次登录，永久全局可用
+const userStore = useUserStore();
+userStore.fetchLoginUser();
 const route = useRoute();
+
 </script>
 
 <style scoped>

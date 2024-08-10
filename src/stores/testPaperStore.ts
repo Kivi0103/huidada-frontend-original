@@ -28,15 +28,6 @@ export const useTestPaperStore = defineStore('testPaperStore', () => {
     const start = ()=>{
         currentCreatingTestPaper.value = {
             questionContent: [
-                {
-                    questionDesc: '',
-                    options: [{
-                        key: 'A',
-                        optionDesc: '',
-                        score: 0,
-                        result: ''
-                    }]
-                }
             ]
         }
         currentCreatingTestPaperId.value = undefined;

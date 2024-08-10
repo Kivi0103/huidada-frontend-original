@@ -72,7 +72,10 @@
       <el-input-number v-model="optionCount" :min="2" placeholder="每道题选项数"></el-input-number>
     </el-form-item>
     <el-button @click="generating" type="primary" :loading="generatingLoading">
-      {{ generatingLoading ? '生成中...' : '生成试题' }}
+      {{ generatingLoading ? '生成中...' : '一键生成' }}
+    </el-button>
+    <el-button @click="generatingWithSSE" type="primary" :loading="generatingLoading">
+      {{ generatingLoading ? '生成中...' : '流式实时生成' }}
     </el-button>
   </el-drawer>
 </template>
@@ -223,7 +226,6 @@ const submitForm = async () => {
       ElMessage.error('创建试卷失败, 请重试');
       router.push('/');
     }
-
   }
 
 };
@@ -256,6 +258,38 @@ const generating = async () => {
   }
   generatingLoading.value = false
 }
+
+
+/**
+ * 提交（实时生成）
+ */
+const generatingWithSSE = async () => {
+  generatingLoading.value = true
+  // 创建 SSE 请求
+  const eventSource = new EventSource(
+      "http://localhost:8101/api/testPaper/ai_generate/sse" +
+      `?description=${creatingTestPaper.description}&optionCount=${optionCount.value}&questionCount=${questionCount.value}&testName=${creatingTestPaper.testName}&type=${creatingTestPaper.type}`
+  );
+  // 接收消息
+  eventSource.onmessage = function (event) {
+    console.log(event.data)
+    const question = JSON.parse(event.data)
+    form.questions.push(question);
+  };
+  // 报错或连接关闭时触发
+  eventSource.onerror = function (event) {
+    if (event.eventPhase === EventSource.CLOSED) {
+      eventSource.close();
+      ElMessage.success('生成试题成功, 请查看试题内容并自主修改');
+      drawer.value = false;
+      generatingLoading.value = false;
+    } else {
+      eventSource.close();
+      ElMessage.error('生成试题失败!');
+      generatingLoading.value = false;
+    }
+  };
+};
 </script>
 
 <style scoped>

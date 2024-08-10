@@ -36,7 +36,7 @@
         <el-radio :value="1">测评类</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="评分策略是否需要使用AI生成" prop="scoringStrategy">
+    <el-form-item label="评分结果是否需要使用AI生成" prop="scoringStrategy">
       <el-radio-group v-model="ruleForm.scoringStrategy">
         <el-radio :value="0">自定义</el-radio>
         <el-radio :value="1">AI评测</el-radio>
