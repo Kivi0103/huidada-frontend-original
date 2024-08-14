@@ -17,6 +17,21 @@ export async function addTestPaperUsingPost(
   });
 }
 
+/** aiGenerateQuestionSSE GET /api/testPaper/ai_generate/sse */
+export async function aiGenerateQuestionSseUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.aiGenerateQuestionSSEUsingGETParams,
+  options?: { [key: string]: any },
+) {
+  return request<API.SseEmitter>('/api/testPaper/ai_generate/sse', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** aiGenerateQuestion POST /api/testPaper/aiGenerateQuestion */
 export async function aiGenerateQuestionUsingPost(
   body: API.AiGenerateQuestionRequestDTO,
@@ -88,6 +103,14 @@ export async function listAppVoByPageUsingPost(
       'Content-Type': 'application/json',
     },
     data: body,
+    ...(options || {}),
+  });
+}
+
+/** testCountTop10 GET /api/testPaper/testCountTop10 */
+export async function testCountTop10UsingGet(options?: { [key: string]: any }) {
+  return request<API.BaseResponseListTestCountVO_>('/api/testPaper/testCountTop10', {
+    method: 'GET',
     ...(options || {}),
   });
 }

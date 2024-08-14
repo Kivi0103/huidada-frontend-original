@@ -44,7 +44,6 @@
     </div>
     <el-button @click="addResultForm">添加一个结果</el-button>
     <el-button type="primary" @click="submitForm">提交</el-button>
-    <el-button type="default" @click="checkout">jijdoa</el-button>
   </div>
 </template>
 

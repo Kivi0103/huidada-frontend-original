@@ -9,8 +9,8 @@ import CreateTestResults from "@/components/CreateTestResults.vue";
 import TestDetails from "@/components/TestDetails.vue";
 import AnsweringTest from "@/components/AnsweringTest.vue";
 import OneAnswerShow from "@/components/OneAnswerShow.vue";
-import UserInfoView from "@/views/TestUserInfoView.vue";
-import TestUserInfoView from "@/views/TestUserInfoView.vue";
+import UserInfoView from "@/views/UserInfoView.vue";
+import TestStatistic from "@/components/TestStatistic.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,6 +57,11 @@ const router = createRouter({
         hideInMenu: true
       }
     },
+    {
+      path: '/TestStatistic',
+      name: '测试统计页面',
+      component: TestStatistic,
+    },
     // {
     //   path: '/test',
     //   name: '创建测试答案列表',
@@ -78,7 +83,7 @@ const router = createRouter({
     {
       path: '/infoOfUser',
       name: '用户个人主页',
-      component: TestUserInfoView,
+      component: UserInfoView,
       meta: {
         hideInMenu: false
       }

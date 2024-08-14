@@ -151,10 +151,11 @@ onBeforeMount(async () => {
 });
 
 const getCurrentPageTests = async () => {
+  console.log("当前主页的用户id：",loginUser.id)
   const pageQueryRequest = ref<API.TestPaperQueryRequestDTO>({
     pageSize: pageSize.value,
     current: currentPage.value,
-    userId: loginUser.id?.toString(),
+    userId: loginUser.id,
     reviewStatus: 1,
   });
   const response = await listAppVoByPageUsingPost(pageQueryRequest.value);

@@ -7,9 +7,34 @@ declare namespace API {
     type?: number;
   };
 
+  type aiGenerateQuestionSSEUsingGETParams = {
+    description?: string;
+    optionCount?: number;
+    questionCount?: number;
+    testName?: string;
+    type?: number;
+  };
+
+  type AppAnswerResultCountVO = {
+    resultCount?: string;
+    resultName?: string;
+  };
+
   type BaseResponseBoolean_ = {
     code?: number;
     data?: boolean;
+    message?: string;
+  };
+
+  type BaseResponseListAppAnswerResultCountVO_ = {
+    code?: number;
+    data?: AppAnswerResultCountVO[];
+    message?: string;
+  };
+
+  type BaseResponseListTestCountVO_ = {
+    code?: number;
+    data?: TestCountVO[];
     message?: string;
   };
 
@@ -75,6 +100,7 @@ declare namespace API {
 
   type CommitUserChoiceRequestDTO = {
     choices?: string[];
+    id?: string;
     scoringStrategyType?: number;
     testPaperId?: number;
     type?: number;
@@ -152,6 +178,16 @@ declare namespace API {
     resultPicture?: string;
     resultProp?: string[];
     resultScoreRange?: number;
+  };
+
+  type SseEmitter = {
+    timeout?: number;
+  };
+
+  type TestCountVO = {
+    id?: string;
+    testCount?: number;
+    testName?: string;
   };
 
   type TestPaperAddRequestDTO = {
@@ -242,6 +278,11 @@ declare namespace API {
     password?: string;
     passwordConfirm?: string;
     userName?: string;
+  };
+
+  type userAnswerCuntByTestPaperIdUsingGETParams = {
+    /** testPaperId */
+    testPaperId: number;
   };
 
   type UserAnswerQueryRequestDTO = {

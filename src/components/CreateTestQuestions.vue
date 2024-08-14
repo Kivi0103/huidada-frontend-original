@@ -220,8 +220,13 @@ const submitForm = async () => {
       }];
       questionErrors.value = [{}];
       testPaperStore.currentCreatingTestPaperId = response.data.data;
-      // 跳转到编辑试卷页面
-      router.push('/createTestResults')
+      if(testPaperStore.currentCreatingTestPaper.scoringStrategyType === 1){
+        // ai评测，不用自己生成答案，直接跳转回首页
+        router.push('/')
+      }else{
+        // 跳转到编辑试卷页面
+        router.push('/createTestResults')
+      }
     } else {
       ElMessage.error('创建试卷失败, 请重试');
       router.push('/');
@@ -264,7 +269,7 @@ const generating = async () => {
  * 提交（实时生成）
  */
 const generatingWithSSE = async () => {
-  generatingLoading.value = true
+  generatingLoading.value = true;
   // 创建 SSE 请求
   const eventSource = new EventSource(
       "http://localhost:8101/api/testPaper/ai_generate/sse" +

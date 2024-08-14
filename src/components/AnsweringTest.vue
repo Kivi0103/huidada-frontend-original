@@ -17,15 +17,24 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import {onBeforeMount, ref} from 'vue';
 import {useTestPaperStore} from "@/stores/testPaperStore";
 import {ElLoading, ElMessage} from "element-plus";
-import {submitCustomAnswerUsingPost} from "@/api/userAnswerController";
+import {generateUserAnswerIdUsingGet, submitCustomAnswerUsingPost} from "@/api/userAnswerController";
 import {useAnswerStore} from "@/stores/answerStore";
 import router from "@/router";
 const questions = useTestPaperStore().currentViewingTestPaper.questionContent;
 const number = ref(0);
 const choices = ref<string[]>([]); // 初始化为空数组
+
+const answerId = ref()
+
+onBeforeMount(async ()=>{
+  const response = await generateUserAnswerIdUsingGet();
+  if(response.data.code === 0){
+    answerId.value = response.data.data
+  }
+})
 
 const beforeQuestion = () => {
   if (number.value > 0) {
@@ -48,7 +57,9 @@ const nextQuestion = async () => {
     }
     // 若每道题都作答了，则提交答案
     if (allAnswered) {
+      // 等待5秒
       const answer = ref<API.CommitUserChoiceRequestDTO>({
+        id: answerId.value,
         choices: choices.value,
         scoringStrategyType: useTestPaperStore().currentViewingTestPaper.scoringStrategyType,
         testPaperId: useTestPaperStore().currentViewingTestPaper.id,
