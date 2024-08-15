@@ -9,6 +9,7 @@
                      v-model:current-page="currentPage"
                      v-model:page-size="pageSize"
                      @current-change="getCurrentPageTests"
+                     :pager-count="4"
       />
     </el-col>
   </el-row>
@@ -82,7 +83,7 @@ const getCurrentPageTests = (async () => {
     })
     const countResponse = await getTestPaperCountUsingPost(getCountRequest.value);
     if (countResponse.data.code === 0) {
-      totalTests.value = countResponse.data.data ? countResponse.data.data : 0;
+      totalTests.value = countResponse.data.data ? Number(countResponse.data.data) : 0;
     } else {
       console.log("请求测试总数失败：", countResponse.data.message)
     }

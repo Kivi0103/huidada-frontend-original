@@ -50,8 +50,8 @@ export async function userRegisterUsingPost(
 
 /** updateHeadPicture POST /api/user/updateHeadPicture */
 export async function updateHeadPictureUsingPost(
-    body: API.UserUpdateRequestDTO,
-    options?: { [key: string]: any },
+  body: API.UserUpdateRequestDTO,
+  options?: { [key: string]: any },
 ) {
   return request<API.BaseResponseBoolean_>('/api/user/updateHeadPicture', {
     method: 'POST',

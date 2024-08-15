@@ -57,9 +57,9 @@ export async function submitCustomAnswerUsingPost(
 
 /** userAnswerCuntByTestPaperId GET /api/userAnswer/userAnswerCuntByTestPaperId */
 export async function userAnswerCuntByTestPaperIdUsingGet(
-    // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-    params: { testPaperId: String },
-    options?: { [p: string]: any },
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.userAnswerCuntByTestPaperIdUsingGETParams,
+  options?: { [key: string]: any },
 ) {
   return request<API.BaseResponseListAppAnswerResultCountVO_>(
     '/api/userAnswer/userAnswerCuntByTestPaperId',

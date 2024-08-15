@@ -100,22 +100,22 @@ declare namespace API {
 
   type CommitUserChoiceRequestDTO = {
     choices?: string[];
-    id?: string;
+    id?: number;
     scoringStrategyType?: number;
     testPaperId?: number;
     type?: number;
   };
 
   type DeleteTestPaperDTO = {
-    id?: string;
+    id?: number;
   };
 
   type GetScoringResultByIdRequestDTO = {
-    testId?: string;
+    testId?: number;
   };
 
   type GetTestPaperByIdDTO = {
-    id?: string;
+    id?: number;
   };
 
   type Option = {
@@ -158,7 +158,7 @@ declare namespace API {
 
   type QuestionContentVO = {
     questionContent?: QuestionItem[];
-    testPaperId?: string;
+    testPaperId?: number;
   };
 
   type QuestionItem = {
@@ -172,7 +172,7 @@ declare namespace API {
   };
 
   type ScoringResultItem = {
-    id?: string;
+    id?: number;
     resultDesc?: string;
     resultName?: string;
     resultPicture?: string;
@@ -185,7 +185,7 @@ declare namespace API {
   };
 
   type TestCountVO = {
-    id?: string;
+    id?: number;
     testCount?: number;
     testName?: string;
   };
@@ -193,7 +193,7 @@ declare namespace API {
   type TestPaperAddRequestDTO = {
     bgPicture?: string;
     description?: string;
-    id?: string;
+    id?: number;
     isAi?: number;
     questionContent?: QuestionItem[];
     scoringStrategyType?: number;
@@ -204,7 +204,7 @@ declare namespace API {
   type TestPaperQueryRequestDTO = {
     current?: number;
     description?: string;
-    id?: string;
+    id?: number;
     isAi?: number;
     pageSize?: number;
     reviewMessage?: string;
@@ -221,7 +221,7 @@ declare namespace API {
   type TestPaperUpdateRequestDTO = {
     bgPicture?: string;
     description?: string;
-    id?: string;
+    id?: number;
     isAi?: number;
     isDelete?: number;
     questionContent?: QuestionItem[];
@@ -234,7 +234,7 @@ declare namespace API {
     bgPicture?: string;
     createTime?: string;
     description?: string;
-    id?: string;
+    id?: number;
     isAi?: number;
     isDelete?: number;
     questionContent?: QuestionItem[];
@@ -244,7 +244,7 @@ declare namespace API {
     testName?: string;
     type?: number;
     updateTime?: string;
-    userId?: string;
+    userId?: number;
     userName?: string;
   };
 
@@ -294,14 +294,14 @@ declare namespace API {
     sortField?: string;
     sortOrder?: string;
     testPaperId?: number;
-    userId?: string;
+    userId?: number;
   };
 
   type UserAnswerVO = {
     answeredUserName?: string;
     choices?: string;
     createTime?: string;
-    id?: string;
+    id?: number;
     questionContent?: string;
     resultDesc?: string;
     resultName?: string;
@@ -314,7 +314,7 @@ declare namespace API {
     testPaperName?: string;
     testPaperType?: number;
     updateTime?: string;
-    userId?: string;
+    userId?: number;
   };
 
   type UserLoginRequestDTO = {
@@ -324,7 +324,7 @@ declare namespace API {
 
   type UserUpdateRequestDTO = {
     headPicture?: string;
-    id?: string;
+    id?: number;
     newPassword?: string;
     oldPassword?: string;
     userName?: string;
@@ -333,7 +333,7 @@ declare namespace API {
   type UserVO = {
     createTime?: string;
     headPicture?: string;
-    id?: string;
+    id?: number;
     role?: string;
     updateTime?: string;
     userName?: string;

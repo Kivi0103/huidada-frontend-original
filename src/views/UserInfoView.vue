@@ -44,6 +44,7 @@
                      v-model:current-page="currentPage"
                      v-model:page-size="pageSize"
                      @current-change="getCurrentPageTests"
+                     :pager-count="5"
       />
     </el-col>
   </el-row>
@@ -77,6 +78,7 @@
                      v-model:current-page="currentAnswerPage"
                      v-model:page-size="pageSize"
                      @current-change="getCurrentPageAnswers"
+                     :pager-count="4"
       />
     </el-col>
   </el-row>
@@ -135,7 +137,7 @@ import {
 import router from "@/router";
 import {ElMessage, type UploadProps} from "element-plus";
 import {useTestPaperStore} from "@/stores/testPaperStore";
-import {listByTestId} from "@/api/scoringResultController";
+import {listByTestIdUsingPost} from "@/api/scoringResultController";
 import {Plus} from "@element-plus/icons-vue";
 import {uploadFileUsingPost} from "@/api/fileController";
 
@@ -167,7 +169,7 @@ const getCurrentPageTests = async () => {
     });
     const countResponse = await getTestPaperCountUsingPost(getCountRequest.value);
     if (countResponse.data.code === 0) {
-      totalTests.value = countResponse.data.data ? countResponse.data.data : 0;
+      totalTests.value = countResponse.data.data ? Number(countResponse.data.data): 0;
     } else {
       console.log("请求测试总数失败：", countResponse.data.message);
     }
@@ -209,11 +211,11 @@ const getCurrentPageAnswers = async () => {
     transFormatAnswers(response.data.data?.records);
     console.log("请求到的用户", myAnswers.value);
     const getCountRequest = ref<API.UserAnswerQueryRequestDTO>({
-      userId: loginUser?.id?.toString(),
+      userId: loginUser?.id,
     });
     const countResponse = await getUserAnswerCountUsingPost(getCountRequest.value);
     if (countResponse.data.code === 0) {
-      totalAnswers.value = countResponse.data.data ? countResponse.data.data : 0;
+      totalAnswers.value = countResponse.data.data ? Number(countResponse.data.data) : 0;
       console.log("请求到的总数", totalAnswers.value);
     } else {
       console.log("请求测试总数失败：", countResponse.data.message);
@@ -350,7 +352,7 @@ const modifyTest =async (id: string) => {
     useTestPaperStore().currentCreatingTestPaper.scoringStrategyType = testPaper.scoringStrategyType;
     useTestPaperStore().currentCreatingTestPaper.id = testPaper.id;
     useTestPaperStore().currentCreatingTestPaperId = testPaper.id;
-    const response2 = await listByTestId({testId: testPaper.id});
+    const response2 = await listByTestIdUsingPost({testId: testPaper.id});
     if (response2.data.code === 0) {
       console.log("根据测试id查询得分结果", response2.data.data);
       useTestPaperStore().currentCreatingTestPaperScoringResults = response2.data.data;

@@ -17,8 +17,8 @@ export async function addScoringResultUsingPost(
   });
 }
 
-/** getScoringResultById POST /api/scoringResult/listByTestId */
-export async function listByTestId(
+/** listByTestId POST /api/scoringResult/listByTestId */
+export async function listByTestIdUsingPost(
   body: API.GetScoringResultByIdRequestDTO,
   options?: { [key: string]: any },
 ) {
